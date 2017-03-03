@@ -24,7 +24,7 @@ void loop()
   Serial.print(DistanceCm); 
   Serial.println(" cm");  
   
-  if (DistanceCm < 10 ) // dustbin full
+  if (DistanceCm < 10 && DistanceCm != 0) // dustbin full
   {
     const char *msg = "1";
     vw_send((uint8_t *)msg, strlen(msg));

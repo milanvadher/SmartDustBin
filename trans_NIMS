@@ -1,0 +1,42 @@
+#include <NewPing.h>
+#include <VirtualWire.h>
+#define  TRIGGER_PIN  12
+#define  ECHO_PIN     11
+#define MAX_DISTANCE 200 
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
+
+int DistanceCm;
+
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println("setup");
+  vw_set_tx_pin(7);
+  vw_set_ptt_inverted(true);
+  vw_setup(4000);
+}
+
+void loop()
+{
+  DistanceCm = sonar.ping_cm();
+  Serial.print("Distance: ");
+  Serial.print(DistanceCm); 
+  Serial.println(" cm");  
+  
+  if (DistanceCm < 10 ) // dustbin full
+  {
+    const char *msg = "1";
+    vw_send((uint8_t *)msg, strlen(msg));
+    vw_wait_tx();
+    digitalWrite(13, HIGH);
+  }
+  else 
+  {
+    const char *msg = "0";
+    vw_send((uint8_t *)msg, strlen(msg));
+    vw_wait_tx();
+    digitalWrite(13, LOW);
+  }
+  delay(1000);
+}
